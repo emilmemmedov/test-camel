@@ -1,0 +1,12 @@
+- route:
+    id: route-144a
+    nodePrefixId: route-d09
+    from:
+      id: from-503c
+      uri: timer
+      parameters:
+        timerName: test timeer
+      steps:
+        - log:
+            id: log-55e1
+            message: ${body}
