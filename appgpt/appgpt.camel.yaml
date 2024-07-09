@@ -4,5 +4,62 @@
     from:
       id: from-a738
       uri: cron
-- beans:
-    - {}
+      parameters:
+        schedule: "*/10 * * * * ?"
+        name: every 10 second
+      steps:
+        - log:
+            id: log-1d21
+            message: Sending request
+        - to:
+            id: to-e3fa
+            uri: https
+            parameters:
+              httpMethod: GET
+              httpUri: jsonplaceholder.typicode.com/comments?postId=1
+        - unmarshal:
+            id: unmarshal-f1d7
+            json:
+              id: json-00c4
+              library: Jackson
+        - setProperty:
+            id: set-property-0381
+            name: posts_data
+            expression:
+              simple:
+                id: simple-2572
+                expression: ${body}
+        - choice:
+            id: choice-2375
+            when:
+              - id: when-53fe
+                expression:
+                  simple:
+                    id: simple-4e6e
+                    expression: ${exchangeProperty.posts_data.size()} > 3
+                steps:
+                  - loop:
+                      id: loop-9003
+                      expression:
+                        simple:
+                          id: simple-87f5
+                          expression: ${exchangeProperty.posts_data.size()}
+                      steps:
+                        - to:
+                            id: to-c0b2
+                            uri: https
+                            parameters:
+                              httpUri: jsonplaceholder.typicode.com/comments?postId=1
+                              httpMethod: GET
+                        - log:
+                            id: log-f6cf
+                            message: Request sent
+            otherwise:
+              id: otherwise-94c0
+              steps:
+                - log:
+                    id: log-4dc4
+                    message: length not enough
+        - log:
+            id: log-503f
+            message: Finished
