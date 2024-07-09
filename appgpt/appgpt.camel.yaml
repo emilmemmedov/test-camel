@@ -38,13 +38,20 @@
                     id: simple-4e6e
                     expression: ${exchangeProperty.posts_data.size()} > 3
                 steps:
-                  - loop:
-                      id: loop-9003
+                  - split:
+                      id: split-9003
                       expression:
                         simple:
                           id: simple-87f5
-                          expression: ${exchangeProperty.posts_data.size()}
+                          expression: ${exchangeProperty.posts_data}
                       steps:
+                        - setHeader:
+                            id: setHeader-keys
+                            name: Authorization
+                            expression:
+                              simple:
+                                id: simple-header
+                                expression: ${body[name]}
                         - to:
                             id: to-c0b2
                             uri: https
@@ -53,7 +60,9 @@
                               httpMethod: GET
                         - log:
                             id: log-f6cf
-                            message: Request sent
+                            message: >-
+                              Request sent with header
+                              x-key=${header.Authorization}
             otherwise:
               id: otherwise-94c0
               steps:
